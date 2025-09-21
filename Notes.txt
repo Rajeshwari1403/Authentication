@@ -2,3 +2,6 @@
 // 2jJiy3xf7WRBpANh
 
 /* mongodb+srv://rajeshwariravi2005_db_user:2jJiy3xf7WRBpANh@cluster0.jvov1zy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0 */
+
+TOKEN => ad051cd015c5cacffdd6922254d760f2
+NAME => Auth_Mern
