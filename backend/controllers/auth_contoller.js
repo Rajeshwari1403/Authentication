@@ -1,14 +1,19 @@
 import { User } from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
+import { generateTokenSetCookie } from "../utils/generateTokenAndSetCookie.js";
 
 export const signup = async (req, res) => {
-  const [ email, password, name] = req.body;
+  const { email, password, name } = req.body;
 
   try {
-    if(!email || !password || !name){
-      throw new Error("All fields are required");
+     if (!email || !password || !name) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
-    const userAlreadyexist = await User.findOne({email});
+    const userAlreadyexist = await User.findOne({ email });
+    console.log("UserAlreadyExists", userAlreadyexist);
     if(userAlreadyexist){
       return res.status(400).json({success: false, message: "User Already Exixts"});
     }
@@ -21,7 +26,23 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       name,
       verificationToken,
+      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000 // 24 Hours
     })
+
+    // Save it to the DataBase
+    await user.save();
+
+    // jwt 
+    generateTokenSetCookie(res, user._id);
+
+    res.status(201).json({
+      success: true,
+      message: "User Created Successfully",
+      user: {
+        ...user._doc,
+        password: undefined
+      },
+    });
 
   } catch (error) {
     res.status(400).json({success: false, message: error.message});
