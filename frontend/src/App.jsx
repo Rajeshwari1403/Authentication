@@ -7,6 +7,7 @@ import VerifyEmailPage from "./pages/VerifyEmailPage";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import Dashboard from "./pages/Dashboard";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 // Protect routes that require authentication
 const ProtectedRoutes = ({children}) => {
@@ -42,8 +43,7 @@ function App() {
     checkAuth() // call once on mount
   }, [checkAuth]);
 
-  console.log("isAuthenticated", isAuthenticated);
-  console.log("user", user);
+  if(isCheckingAuth) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-darkblue to-lightblue flex items-center justify-center relative overflow-hidden">
@@ -52,7 +52,7 @@ function App() {
       <FloatingShape color="bg-blue-900" size="w-32 h-32" top="40%" left="-10%" delay={2} />
 
       <Routes>
-        
+
         <Route path="/" element={
           <ProtectedRoutes>
             <Dashboard />
