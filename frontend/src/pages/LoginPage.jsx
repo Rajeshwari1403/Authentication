@@ -41,7 +41,7 @@ const LoginPage = () => {
            onChange={(e) => setPassword(e.target.value)}
         />
         <div className='flex items-center mb-6'>
-          <Link to='forgot-password' className='test-sm text-blue-400 hover:underline'>
+          <Link to='/forgot-password' className='test-sm text-blue-400 hover:underline'>
              Forgot Password?
           </Link>
         </div>
