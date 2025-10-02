@@ -1,11 +1,9 @@
 import { create } from "zustand";
 import axios from "axios";
 
-// In this file, all states and functions needed for Authentication
-
 const API_URL = "http://localhost:5000/api/auth";
+axios.defaults.withCredentials = true;
 
-axios.defaults.withCredentials= true;
 export const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
@@ -16,35 +14,42 @@ export const useAuthStore = create((set) => ({
   signup: async (email, password, name) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/signup`, {
-        email,
-        password,
-        name,
-      });
-
-      set({
-        user: response.data.user,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      const response = await axios.post(`${API_URL}/signup`, { email, password, name });
+      set({ user: response.data.user, isAuthenticated: true, isLoading: false });
     } catch (error) {
-      set({
-        error: error.response?.data?.message || "Signup failed",
-        isLoading: false,
-      });
+      set({ error: error.response?.data?.message || "Signup failed", isLoading: false });
       throw error;
     }
   },
 
- verifyEmail: async (code) => {
-		set({ isLoading: true, error: null });
-		try {
-			const response = await axios.post(`${API_URL}/verify-email`, { code });
-			set({ user: response.data.user, isAuthenticated: true, isLoading: false });
-			return response.data;
-		} catch (error) {
-			set({ error: error.response.data.message || "Error verifying email", isLoading: false });
-			throw error;
-		}
-	},
+  verifyEmail: async (code) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(`${API_URL}/verify-email`, { code });
+      set({ user: response.data.user, isAuthenticated: true, isLoading: false });
+      return response.data;
+    } catch (error) {
+      set({ error: error.response?.data?.message || "Error verifying email", isLoading: false });
+      throw error;
+    }
+  },
+
+  checkAuth: async () => {
+  set({ isCheckingAuth: true, error: null });
+  try {
+    const response = await axios.get(`${API_URL}/check-auth`);
+    set({
+      user: response.data.user,
+      isAuthenticated: true,
+      isCheckingAuth: false,
+    });
+  } catch (error) {
+    set({
+      user: null,
+      isAuthenticated: false,
+      isCheckingAuth: false,
+      error: error.response?.data?.message || "Authentication failed",
+    });
+  }
+},
 }));

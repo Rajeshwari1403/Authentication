@@ -117,7 +117,11 @@ export const login = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
-  res.clearCookie("token")
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+  });
   res.status(200).json({success: true, message: "Logged out successfully"});  
 }
 
@@ -190,6 +194,7 @@ export const checkAuth = async(req, res) => {
     res.status(200).json({ success: true, user })
 
   } catch (error) {
-    
+    console.log("Error in checkAuth", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 }
